@@ -1,0 +1,78 @@
+
+
+DeliveryFactory {
+    Delivery schedule(ScheduleDelivery command)
+}
+
+example aggregate:
+Delivery {
+    UUID id
+    Transport transport;
+    Payload payload;
+
+    TransportCapacityPolicy policy
+
+    DeliveredAmountsChanged edit(EditDelivery command)
+    DeliveredAmountsChanged cancel(CancelDelivery command)
+}
+
+example policy:
+TransportCapacityPolicy {
+
+    StorageUnitsAmounts calculateExceedingAmounts(
+        TransportCapacity capacity,
+        StorageUnitsAmounts payload
+    )
+}
+
+interface DeliveryPlanRepository {
+    DeliveryPlan get(LocalDate id)
+}
+
+PlanCompleteness {
+
+    LocalDate date
+
+    PlanCompletenessPolicy policy
+
+    void apply(DeliveredAmountsChanged event)
+    void apply(DemandChanged event)
+
+    ProductAmounts getDiff()
+    boolean isComplected()
+}
+
+PlanCompletenessPolicy {
+    boolean isComplected(ProductAmounts diff)
+}
+
+example value object:
+
+TransportCapacity {
+    int palletPlaces;
+    int trailersPlaces;
+}
+
+StorageUnitsAmounts {
+
+    int getPalletsAmount()
+    int getCagesAmount()
+    int getPalletPlacesForCages()
+    int getPalletPlaces()
+
+    boolean hasOnlyTrailers()
+    boolean hasNoTrailers()
+    int getTrailersAmount()
+}
+
+
+
+
+
+
+
+
+
+
+
+
